@@ -121,6 +121,7 @@ function processSitesWatts(results) {
 			wattsLabel.push(siteMap[site[0]]);
 		}
 	});
+	document.querySelector('#output').innerHTML = "<h1>Belize Solar Data</h1>";
 	// Display graph
 	makeSummaryGraph(wattsLabel,wattsData);
 
