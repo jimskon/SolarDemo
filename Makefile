@@ -15,5 +15,5 @@ PutHTML:
 
 
 	echo "Current contents of your HTML directory: "
-	ls -l /var/www/html/solardemo
+	ls -l /var/www/html/solar
 
