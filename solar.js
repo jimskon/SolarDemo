@@ -19,7 +19,17 @@ const QueryErr = '<p style="color:red">ErQuery failed';
 var siteMap = {};  // A global place to store MAC to School name map
 var summaryChart = 0;
 var summaryWhrChart = 0;
+var dailyWattsChart = 0;
+var mode = "main"
+var cursite = "";
+var datetouse = "";
 
+// Start things off by getting site list information
+$(document).ready(function(){
+	document.querySelector('#update-btn').addEventListener('click',update);
+	datetouse=todaysDate();
+	getSites();
+});
 
 // Add an event listener for each item in the pull down menu
 function updateSiteList() {
@@ -30,22 +40,53 @@ document.querySelectorAll('.dropdown-menu a').forEach(item => {
 
 		siteMAC = element.getAttribute("value");
 		console.log("pick: "+site+" "+siteMAC);
-		// Get the pulldown parent
-		var pullDown = element.parentElement.parentElement;
-		// Get and set the selection displayed
-		var selection = pullDown.querySelectorAll(".selection")[0];
-		selection.innerHTML = site;
+
+		document.querySelector('#locselection').innerHTML = site;
 		if (site == "All") {
+			mode = "main";
 			getSitesWatts();
 			return;
 		}
+		mode = "site";
+		cursite = siteMAC;
 		getSiteInfo(siteMAC);
 		
     })
 })
 }
-// Start things off by getting site list information
-getSites();
+
+// Update button
+function update() {
+	datetouse = document.querySelector('#datelu').value;
+	console.log(datetouse);
+	if (mode=="main") {
+		getSitesWatts();
+	} else if (mode=="site") {
+		getSiteInfo(cursite);
+	}
+}
+
+// Set up date picker
+const getDatePickerTitle = elem => {
+  // From the label or the aria-label
+  const label = elem.nextElementSibling;
+  let titleText = '';
+  if (label && label.tagName === 'LABEL') {
+    titleText = label.textContent;
+  } else {
+    titleText = elem.getAttribute('aria-label') || '';
+  }
+  return titleText;
+}
+
+const elems = document.querySelectorAll('.datepicker_input');
+for (const elem of elems) {
+  const datepicker = new Datepicker(elem, {
+    'format': 'yyyy-mm-dd', // UK format
+    title: getDatePickerTitle(elem)
+  });
+}   
+
 
 function clearOutput() {
 	document.querySelector('#output').innerHTML = "";
@@ -110,11 +151,10 @@ function getSites() {
 
 // Build site name dropdown menu from site data
 function siteDropdown(data) {
-    var dropdown = '<a class="dropdown-item" href="#" value="0">All</a>';
+    var dropdown = '<li><a class="dropdown-item" href="#" value="0">All</a></li>';
     for(var key in data) {
-		dropdown += '<a class="dropdown-item" href="#" value="'+key+'">'+data[key]+'</a>';
+		dropdown += '<li><a class="dropdown-item" href="#" value="'+key+'">'+data[key]+'</a></li>';
     };
-    
     document.querySelector('#searchtype').innerHTML = dropdown;
 
     return;
@@ -148,7 +188,8 @@ function processSitesWatts(results) {
 
 // Get watt data for all sites, then display graph
 function getSitesWatts() {
-
+	deleteDayCharts()
+	deleteMainCharts();
     fetch(Url+AllWatts, {
 	method: 'get'
     })
@@ -159,6 +200,27 @@ function getSitesWatts() {
 	})
 
 }
+
+// Get watts for site 
+function wattlist(data) {
+	var power = []
+	var times = []
+	data.forEach ( function(row) {
+		power.push(parseInt(row[3]));
+    });
+    return power;
+} 
+
+// Get times for site 
+function timeslist(data) {
+	var power = []
+	var times = []
+	data.forEach ( function(row) {
+		var time = getTime(row[2]);
+		times.push(time);
+    });
+    return times;
+} 
 
 // Build watt output table 
 function wattTable(data) {
@@ -207,7 +269,6 @@ function displayAllSiteTodayWatts(data){
 		}
 		
 	});
-	console.log(JSON.stringify(names),JSON.stringify(whrs));
 	makeSumSummaryGraph(names,whrs);
 }
 
@@ -221,35 +282,35 @@ function processAllSiteTodayWatts(results) {
 	var data = results['message'];
 	
 	//console.log(JSON.stringify(data));
-	document.querySelector('#output2').innerHTML += "<h1>Total Kilowatts today</h1>";
+	document.querySelector('#output2').innerHTML = "<h1>Total Watt Hours " + datetouse + "</h1>";
 	displayAllSiteTodayWatts(data);
 }
 
 // Get All Site watts by hour for that day
 function getAllSiteTodayWatts() {
 	var command=Url+SolarWattsAllDayAllSites;
-	command=command.replace("%DATE%",todaysDate());
-	console.log(command);
+	command=command.replace("%DATE%",datetouse);
 	fetch(command, {
 		method: 'get'
     	})
 		.then (response => response.json() )
         	.then (data => processAllSiteTodayWatts(data))
 		.catch(error => {
-	    	document.querySelector('#output').innerHTML = ErrSrv+" Get all sites watts for today";
+	    	document.querySelector('#output').innerHTML = ErrSrv+" Get all sites watts for "+datetouse;
 		})
 }
+
+
 
 // Process the Site watts by hour for that day
 function processSiteDailyWatts(results) {
 	if (!results["success"]) {
-		document.querySelector('#output').innerHTML = QueryErr+" Get sites watts for today";
+		document.querySelector('#output').innerHTML = QueryErr+" Get sites watts for " + datetouse;
 		return;
 	}
-	//clearCanvas();
 	var data = results['message'];
-	//console.log(JSON.stringify(data));
-	document.querySelector('#output').innerHTML += wattTable(data);
+	//document.querySelector('#output').innerHTML += wattTable(data);
+	graphWatts(wattlist(data),timeslist(data));
 }
 
 // Get the Site watts by minute for that day
@@ -258,14 +319,14 @@ function getSiteDailyWatts(siteMAC) {
 	var command=Url+siteDayWatts;
 
 	command=command.replace("%SITE%",MAC);
-	command=command.replace("%DATE%",todaysDate());
+	command=command.replace("%DATE%",datetouse);
 	fetch(command, {
 		method: 'get'
     	})
 		.then (response => response.json() )
         	.then (data => processSiteDailyWatts(data))
 		.catch(error => {
-	    	document.querySelector('#output').innerHTML = QueryErr+" Get sites watts for today";
+	    	document.querySelector('#output').innerHTML = QueryErr+" Get sites watts for " + datetouse;
 		})
 }
 
@@ -276,21 +337,22 @@ function processSiteInfo(results) {
 		return;
 	}
 	var data = results['message'];
-	//console.log(JSON.stringify(data));
 	var output = "<h1>"+data['name']+"</h1>";
 	output += "<p><b>Location:</b> <i>"+data['location']+"</i> <b>Contact:</b> <i>"+data['contactName']+"</i>";
 	output += " <b>Email:</b> <i>"+data['contactEmail']+"</i> </p>";
 	output += "<p><b>Panels:</b> <i>"+data['numPanels']+"</i> <b>Limiter:</b> <i>"+data['limiter']+"</i></p>";
 	document.querySelector('#output').innerHTML = output;
-	destroySummaryChart();
 	getSiteDailyWatts(siteMAC);
 	
 }
 
 // Get the Site info given the site MAC address
 function getSiteInfo(siteMAC) {
+	deleteDayCharts()
+	deleteMainCharts();
 	var MAC = shortMAC(siteMAC);
 	var command=Url+siteInfo;
+
 
 	command=command.replace("%SITE%",MAC);
 	fetch(command, {
@@ -303,18 +365,10 @@ function getSiteInfo(siteMAC) {
 		})
 }
 
-// Remove summary chart
-function destroySummaryChart() {
-	summaryChart.destroy();
-	summaryChart = 0;	
-}
-
 // Create and display a bar graph of live data for all sites.
 function makeLiveSummaryGraph(names,watts) {
 	
   const ctx = document.getElementById('chart');
-  
-  if (summaryChart) destroySummaryChart();
 	
   summaryChart = new Chart(ctx, {
     type: 'bar',
@@ -338,25 +392,18 @@ function makeLiveSummaryGraph(names,watts) {
 
 }
 
-// Remove whatt hour chart
-function destroyWhrChart() {
-	summaryChart.destroy();
-	summaryChart = 0;	
-}
 
 // Create and display a bar graph of total killowatts today all sites.
 function makeSumSummaryGraph(names,watts) {
 	
   const ctx = document.getElementById('chart2');
   
-  if (summaryWhrChart) destroyWhrChart();
-	
   summaryWhrChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: names,
       datasets: [{
-        label: 'Kilowatt hours',
+        label: 'Watt hours',
         data: watts,
         borderWidth: 1
       }]
@@ -372,3 +419,50 @@ function makeSumSummaryGraph(names,watts) {
   });
 }
 
+// Create and display a line graph for a day.
+function graphWatts(watts,times) {
+const labels2 = times;
+const data2 = {
+  labels: labels2,
+  datasets: [{
+    label: 'Watts for day',
+    data: watts,
+    fill: false,
+    borderColor: 'rgb(75, 192, 192)',
+    tension: 0.1
+  }]
+};
+const config2 = {
+  type: 'line',
+  data: data2,
+};
+const ctx2 = document.getElementById('chart');
+dailyWattsChart= new Chart(ctx2,config2);
+document.querySelector('#output').innerHTML = "<h2>Watts Summary for " + datetouse + "</h2>";
+document.querySelector('#output2').innerHTML = "";
+}
+
+// Delete charts
+function deleteMainCharts() {
+	if (summaryChart) {
+		summaryChart.clear();
+		summaryChart.destroy();
+		summaryChart=0;
+	}
+	if (summaryWhrChart) {
+		summaryWhrChart.clear();
+		summaryWhrChart.destroy();
+		summaryWhrChart=0;
+	}
+
+}
+
+// Delete charts
+function deleteDayCharts() {
+
+	if (dailyWattsChart) {
+		dailyWattsChart.clear();
+		dailyWattsChart.destroy();
+		dailyWattsChart=0;
+	}
+}
