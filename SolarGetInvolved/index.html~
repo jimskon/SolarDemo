@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Solar Power for Schools</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-5">
+                <a class="navbar-brand" href="#!">Get Involved in Solar Power for Schools</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" onclick="location.href='..'">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Content-->
+        <div class="container px-4 px-lg-5">
+            <!-- Heading Row-->
+            <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="Roof.jpg" alt="..." /></div>
+                <div class="col-lg-5">
+                    <h1 class="font-weight-light">Solar Power for Schools</h1>
+                    <p>Since 2014 <a href="https://www.kenyon.edu/">Kenyon College</a> students have installing Grid-tie power systems on schools in Belize. This project is dedicated to sharing the knowlege of what we did, and how we did it.  
+                    Our larger goal is to share what we learned, so that other colleges and universities can get involved. Why?  To help schools, and to help the environment!</p>
+                    <p>Would your college or university like to engage in similar projects?  We would love to help get you started.</p>
+                </div>
+            </div>
+            <!-- Call to Action-->
+            <div class="card text-white bg-secondary my-5 py-4 text-center">
+                <div class="card-body"><p class="text-white m-0">We would love to encourage and empower other similar projects across the planet!</p></div>
+            </div>
+            <!-- Content Row-->
+            <div class="row gx-4 gx-lg-5">
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Contact us</h2>
+                            <p class="card-text">Ask questions about how you can get started. We will do our best to help you get started. we don;t know it all, but we do have some experience and ideas</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Host a workshop</h2>
+                            <p class="card-text">We can offer a 1-2 day workshop at your organization. We can do a deep dive into what is required to get a project like this up and running for your students and organization.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Hands on in Belize</h2>
+                            <p class="card-text">Come to Belize March 2-11, 2024, and learn by participating in a real hands on project. We will meet people, actually install solar power systems, and workshop and brainstorm in the evenings.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="mailto:skonjp@kenyon.edu?subject=Hands On Solar&body=I&rsquo;m interested in participating in a hands on solar install experience">More Info</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">Copyright &copy; James Skon, Kenyon College 2023</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

@@ -8,10 +8,12 @@
 all: PutHTML
 
 PutHTML:
-	cp solar.html /var/www/html/solardemo/
-	cp solar.css /var/www/html/solardemo/
-	cp solar.js /var/www/html/solardemo/
-	cp jquery-3.1.1.min.js /var/www/html/solardemo/
+	cp index.html /var/www/html/solar/
+	cp solar.css /var/www/html/solar/
+	cp solar.js /var/www/html/solar/
+	cp BelizeSolarMap.png /var/www/html/solar/
+	cp -r SolarGetInvolved /var/www/html/solar/
+	cp jquery-3.1.1.min.js /var/www/html/solar/
 
 
 	echo "Current contents of your HTML directory: "
